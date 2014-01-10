@@ -1,0 +1,139 @@
+/* Global CSS for mapper
+// Arthur Wuterich
+// 1-9-14
+*/
+
+*
+{
+    margin:0px;
+    padding:0px;
+}
+
+body
+{
+    overflow:hidden;
+    overflow-x:hidden;
+    overflow-y:hidden;
+}
+
+/* Positioning for the main box */
+#map
+{
+    width: 80%;
+    margin: 5% auto;
+    
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    cursor:crosshair;
+    
+}
+
+/* Styles for the content in the main box */
+#map .map_image
+{
+    position: relative;
+    background-image:url('../image/map.jpg');
+    background-size: 100% 100%;
+    padding-bottom: 50%;
+}
+
+#right_bar
+{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 50px;
+    height: 100%;
+    background-color: #EEE;
+}
+
+#right_bar input[type="range"]
+{
+    transform:rotate(90deg);
+    -ms-transform:rotate(90deg); /* IE 9 */
+    -webkit-transform:rotate(90deg); /* Safari and Chrome */
+    
+    position: relative;
+    right: 24px;
+    top: 6px;
+    width: 100px;
+    height: 100px;
+    
+}
+
+#right_bar .light, #right_bar .dark, #right_bar .visible, #right_bar .invisible
+{
+    width: 10px;
+    height: 10px;
+    border: 1px solid #000;
+    margin: 10px auto 0px auto;
+    background-color: #FFF;
+}
+
+#right_bar .dark
+{
+    background-color: #000;
+}
+
+#right_bar .visible
+{
+    margin-top: 10px;
+    border: 1px dashed #000;
+    background-color:transparent;
+}
+
+.point_wrapper
+{
+    width:10px;
+    height:10px;
+    position: absolute;
+}
+
+.point
+{
+    width:8px;
+    height:8px;
+    border-radius: 50%;
+    position: relative;
+    right:4px;
+    bottom:4px;
+}
+
+#color
+{
+    margin-top:10px;
+}
+
+#color label
+{
+    margin-right:10px;
+}
+
+.color
+{
+    width:55px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* EOF */
