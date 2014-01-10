@@ -1,16 +1,33 @@
 <?php
-    session_start();
+    // If the remote address matches against the list return true
+    function MatchWhitelist( $list )
+    {    
+        if( !is_array($list) )
+        {
+            return false;
+        }
+        
+        foreach( $list as $re )
+        {
+            if( preg_match( "/{$re}/", $_SERVER['REMOTE_ADDR'] ) == 1 )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     
     // Database abstraction
     include_once 'php/db.php';
     
     // Whitelist array
     $whiteList = array(
-        '71.202.94.245'
+        '71.202.94.245',
+        '(\d+.){3}(\d+)'
     );
        
     // If the ip is not in the whitelist then redirect
-    if( !in_array( $_SERVER['REMOTE_ADDR'], $whiteList ) )
+    if( !MatchWhitelist( $whiteList ) )
     {
         header('Location: http://arthurwut.com');
         exit;
