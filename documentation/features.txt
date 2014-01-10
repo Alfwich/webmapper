@@ -1,0 +1,24 @@
+Layers:
+  map
+  grid
+    horizontal center labels
+    vertical center labels
+    horizontal top side labels*
+    vertical left side labels*
+    horizontal bottom side labels*
+    vertical right side labels*
+  safezones
+    safe range* (rough range where safezone is valid until)
+  bridges
+  subways
+    routes* (additional subway information for movement through)
+  player*
+    current location*
+    historical locations*
+  route/waypoint*
+    global*
+    personal*
+    
+Zoom (50% - 200%, default at 50%)
+    
+*Does not current exist
