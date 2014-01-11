@@ -33,6 +33,7 @@ function BindEvents()
     $("#background_range").change( BackgroundRangeChange );
     $("#map_range").change( MapOpacityRangeChange );
     $(".map_image").click( MapClick );
+    $("#clear_dots_button").click( CleanPoints );
 }
 
 function AddRelativePoint(x,y,color)
@@ -124,18 +125,18 @@ $(document).ready( function(e){
     setInterval( GetPoints, 3000);
 });
 
-function CleanDots()
+function CleanPoints()
 {
     log( "sending request to remove dots" );
+    
     // Send AJAX call to remove user's dots
+    var post = { 'ajax_request':'clean_dots', 'user_id':id };
     $.ajax({
         type: 'POST',
         url: '/ne/',
         data: post,
-        async:false
+        async: false
     });
-    
-    id='';    
 }
 
 
