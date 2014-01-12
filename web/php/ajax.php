@@ -10,16 +10,32 @@
                 $x = Get( 'x' );
                 $y = Get( 'y' );
                 $user_id = Get( 'user_id' );
-                $color = Get( 'color' );                
+                $map = Get( 'map' );
+                $color = Get( 'color' );    
                 
-                DB_Query( "INSERT INTO dot (x,y,user_id,color) VALUES ({$x}, {$y}, '{$user_id}', '{$color}' )" );
+                $id = DB_GetSingleArray( DB_Query( "SELECT id from map where map_key='{$map}' LIMIT 1" ) );
+                
+                // Create the map if needed
+                if( count( $id ) <= 0 )
+                {
+                    DB_Query( "INSERT INTO map (map_key) VALUES('{$map}')" );
+                    $id = DB_GetInsertID();
+                }
+                else
+                {
+                    $id = $id[0];
+                }
+                
+                // Insert the dot
+                DB_Query( "INSERT INTO dot (x,y,user_id,color,map_id) VALUES ({$x}, {$y}, '{$user_id}', '{$color}', {$id} )" );                
                 
                 $output = array( 'x' => $x, 'y' => $y, 'code' => 1 );
             break;
             
            case 'get_dots':
                 $time = Get( 'time' );
-                $output = array( 'dots' => DB_GetArray( DB_Query( "SELECT * FROM dot WHERE UNIX_TIMESTAMP(added) > {$time}" ), true ), 'code' => 1, 'time' => time() );
+                $map = Get( 'map' );
+                $output = array( 'dots' => DB_GetArray( DB_Query( "SELECT * FROM dot, map WHERE UNIX_TIMESTAMP(dot.added) > {$time} AND dot.map_id = map.id AND map.map_key='{$map}'" ), true ), 'code' => 1, 'time' => time() );
             break;
 
             case 'clean_dots':

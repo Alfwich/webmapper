@@ -109,6 +109,21 @@ function DB_GetSingleArray( &$result, $assoc = false )
 	return $array;
 }
 
+// Returns the auto generated id from the previous query
+// Precondition: A valid database connection
+function DB_GetInsertID()
+{
+    return mysql_insert_id();
+}
+
+
+
+
+
+
+
+
+
 // Returns the associated file in the post array or ends execution if the variable is required and not present
 // Precondition: Assumes a DB link
 //	$postVariable: The post variable to retrieve
