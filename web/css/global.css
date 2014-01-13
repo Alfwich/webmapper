@@ -11,28 +11,52 @@
 
 #application
 {
+<<<<<<< HEAD
     width:100%;
     height:100%;
     overflow: hidden;
     white-space: nowrap;
     position:absolute;
+=======
+>>>>>>> 675bd4f4786bf0140a6a324612845e1970017978
+}
+
+hr
+{
+    clear:both;
+    
+    margin-top:5px;
+    margin-bottom:5px;
+    width: 100%;
+    height:1px;
+    
+    background: #b7b7b7;
+    background-color: #b7b7b7;
+    border: 0px;
+}
+
+#application
+{
+    width:100%;
+    height:100%;
+    overflow: hidden;
+    white-space: nowrap;
+    position:absolute;
+    min-width: 1015px;    
+}
+
+#application *
+{
+    overflow: visible;
+    white-space: normal;  
 }
 
 /* Positioning for the main box */
 #map
 {
-    width: 80%;
-    margin: 5% auto;
-    
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
+    width: 100%;
+    margin: 75px 0px 0px 0px;
     cursor:crosshair;
-    
 }
 
 /* Styles for the content in the main box */
@@ -41,35 +65,27 @@
     position: relative;
     background-image:url('../image/map.jpg');
     background-size: 100% 100%;
-    padding-bottom: 50%;
+    padding-bottom: 55%;
 }
 
-#right_bar
+#top_bar
 {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    width: 50px;
-    height: 100%;
     background-color: #EEE;
 }
 
-#right_bar input[type="range"]
+#options_menu input[type=range]
 {
-    transform:rotate(90deg);
-    -ms-transform:rotate(90deg); /* IE 9 */
-    -webkit-transform:rotate(90deg); /* Safari and Chrome */
-    
-    position: relative;
-    right: 24px;
-    top: 6px;
-    width: 100px;
-    height: 100px;
-    
+    clear:both;
+    width:100%;
 }
 
+<<<<<<< HEAD
 #right_bar .light, #right_bar .dark, #right_bar .visible, #right_bar .invisible, #right_bar .fast, #right_bar .slow
+=======
+#options_menu .light, #options_menu .dark, #options_menu .visible, #options_menu .invisible
+>>>>>>> 675bd4f4786bf0140a6a324612845e1970017978
 {
+    float:right;
     width: 10px;
     height: 10px;
     border: 1px solid #000;
@@ -77,16 +93,22 @@
     background-color: #FFF;
 }
 
-#right_bar .dark
+#options_menu .dark
 {
+    float:left;
     background-color: #000;
 }
 
-#right_bar .visible
+#options_menu .visible
 {
     margin-top: 10px;
     border: 1px dashed #000;
     background-color:transparent;
+}
+
+#options_menu .invisible
+{
+    float:left;
 }
 
 .point_wrapper
@@ -100,10 +122,15 @@
 {
     width:8px;
     height:8px;
-    border-radius: 50%;
     position: relative;
     right:4px;
     bottom:4px;
+    background-color: #FFF;
+}
+
+.point_circle
+{
+    border-radius: 50%;
 }
 
 #color
@@ -120,6 +147,211 @@
 {
     width:55px;
 }
+
+#top_bar
+{
+    position: absolute;
+    top:0px;
+    left:0px;
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px ridge #CECECE;
+}
+
+#top_bar .connect_box
+{
+}
+#top_bar input
+{
+    float:left;
+    margin: auto auto;
+    height: 40px;
+    margin-top: 5px;
+    margin-left: 5px;
+    padding-left: 5px;
+    padding-right: 5px;  
+}
+
+#map_label
+{
+    display: inline;
+    padding:15px;
+    font-weight: bold;
+    font-size: 20px;
+    float:left;
+}
+#top_bar input.right
+{
+    float:right;
+    margin-right: 5px;
+    margin-left: 0px;
+}
+
+.no_select
+{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.popup
+{
+    position: absolute;
+    z-index: 10;
+}
+
+#drawing_tool
+{
+    position:relative;
+    overflow: hidden;
+    white-space: nowrap;    
+}
+
+#top_bar #drawing_tool .point_wrapper
+{
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    margin: auto;
+}
+
+#top_bar #drawing_tool .point_wrapper .point
+{
+    right:0px;
+    bottom:0px;
+}
+
+#top_bar #drawing_tool
+{
+    margin: 5px 5px 5px 5px;
+    
+    height: 38px;
+    width: 50px;
+    float: right;
+    
+    border-radius: 2px;
+    background-color: #CCC;
+
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0,0,0,.3);
+    -webkit-border-radius: .5em;
+    -moz-border-radius: .5em;
+    border-radius: .5em;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    border: solid 1px #b7b7b7;    
+}
+
+#top_bar input[type=button]
+{
+    color: #606060;
+    border: solid 1px #b7b7b7;
+    background: #fff;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ededed));
+    background: -moz-linear-gradient(top, #fff, #ededed);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ededed');
+    zoom: 1;
+    vertical-align: baseline;
+    outline: none;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0,0,0,.3);
+    -webkit-border-radius: .5em;
+    -moz-border-radius: .5em;
+    border-radius: .5em;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,.2);    
+}
+
+#top_bar input[type=button]:hover
+{
+    background: #ededed;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#dcdcdc));
+    background: -moz-linear-gradient(top, #fff, #dcdcdc);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#dcdcdc');
+}
+
+#top_bar input[type=button]:disabled
+{
+    color: #A2A2A2;
+    border: solid 1px #555;
+    background: #6e6e6e;
+    background: -webkit-gradient(linear, left top, left bottom, from(#888), to(#575757));
+    background: -moz-linear-gradient(top, #888, #575757);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#888888', endColorstr='#575757');    
+}
+
+ .popup, #drawing_tools, #options_menu, #map_menu
+{
+    padding:5px;
+    
+    color: #000;
+    background-color: #EEE;
+
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0,0,0,.3);
+    -webkit-border-radius: .5em;
+    -moz-border-radius: .5em;
+    border-radius: .5em;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    border: solid 1px #b7b7b7; 
+}
+
+#drawing_tools, #options_menu, #map_menu
+{
+    position:absolute;
+    z-index: 5;
+    top: 50px;    
+}
+
+#drawing_tools
+{
+    right: 68px;
+}
+
+#options_menu
+{
+    right: 5px;
+}
+
+#map_menu
+{
+    left: 464px;
+}
+
+#top_bar #map_menu input[type=button]
+{
+    float: none;
+    display: block;
+    width: 100%;
+    margin: 5px;
+}
+
+#options_menu input, #map_menu input[type=button]
+{
+    position: relative;
+    right: 5px;
+}
+
+#point_color
+{
+    width: 70px;
+}
+
+
+
+
 
 
 
