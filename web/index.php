@@ -64,36 +64,9 @@
     <script type="text/javascript" src="js/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript" src="js/jscolor/jscolor.js"></script>
-<<<<<<< HEAD
-    <script type="text/javascript">var id = "<?php echo md5(time()); ?>";</script>
-</head>
-<body>
-    <div id="application">
-        <div id="right_bar">
-            <div class="dark"></div>
-            <input type="range" id="background_range" name="background_color" min="0" max="255" value="255">
-            <div class="light"></div>
-            
-            <div class="visible"></div>
-            <input type="range" id="map_range" name="map_opacity" min="0" max="100" value="100">
-            <div class="invisible"></div>
-            
-            <div class="slow"></div>
-            <input type="range" id="refresh_rate" name="map_refresh" min="0" max="10" value="10">
-            <div class="fast"></div>            
-            
-        </div>
-        <div id="map">
-            <div class="map_image">
-            </div>
-            <div id="color">
-                Dot Color <input type="text" name="color" class="color" value="" />
-                <input type="button" id="clear_dots_button" name="clear_dots" value="Clear My Dots" />
-            </div>
-=======
     <script type="text/javascript" src="js/webtoolkit.md5.js"></script>
     <script type="text/javascript">
-        var id = "<?php echo substr( md5(time()), 0, 10 ); ?>";
+        var ID = "<?php echo substr( md5(time()), 0, 10 ); ?>";
         var CLIENT_IP="<?php echo $_SERVER['REMOTE_ADDR']; ?>";
     </script>
 </head>
@@ -142,7 +115,6 @@
         </div>
         <div id="map" class="no_select">
             <div class="map_image"></div>
->>>>>>> 675bd4f4786bf0140a6a324612845e1970017978
         </div>
     </div>
 </body>

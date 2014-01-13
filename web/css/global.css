@@ -9,16 +9,8 @@
     padding:0px;
 }
 
-#application
+body
 {
-<<<<<<< HEAD
-    width:100%;
-    height:100%;
-    overflow: hidden;
-    white-space: nowrap;
-    position:absolute;
-=======
->>>>>>> 675bd4f4786bf0140a6a324612845e1970017978
 }
 
 hr
@@ -79,11 +71,7 @@ hr
     width:100%;
 }
 
-<<<<<<< HEAD
-#right_bar .light, #right_bar .dark, #right_bar .visible, #right_bar .invisible, #right_bar .fast, #right_bar .slow
-=======
 #options_menu .light, #options_menu .dark, #options_menu .visible, #options_menu .invisible
->>>>>>> 675bd4f4786bf0140a6a324612845e1970017978
 {
     float:right;
     width: 10px;
