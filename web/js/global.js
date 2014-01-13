@@ -2,11 +2,13 @@
 // Arthur Wuterich
 // 1-9-14
 
+// Logging abstraction
 log = function(msg)
 {
     console.log(msg);
 };
 
+// Webmapper: Defines the methods and variables required for the webmapper application
 var webMapper = 
 {
 
@@ -14,23 +16,24 @@ var webMapper =
     NO_LOADED_MAP_LABEL:'No Loaded Map',
     MAX_REFRESH_INTERVAL:10000,
     MIN_REFRESH_INTERVAL:500,
+    REFRESH_INTERVAL_STEP:500,
+    CLIENT_IP:'',    
+    ID:'',
 
-    // State Variables
+    // Application Variables
     currentMapID:'',
     currentPassphrase:'',
     drawingTool:0,
-    admin:false,
-    ID:'',
-    CLIENT_IP:'',
-
-    // Application Variables
-    lastCheckedTime:1,
+    
+    // State Flags
+    admin:false,    
     hasLoaded:false,
     isLoading:false,
+    
+    // Refresh Timer Variables
     refreshTimeoutId:null,
-    currentRefreshInterval:500,
-    refreshIntervalStep:500,
-    mapIdPopup:null,
+    currentRefreshInterval:0,
+    lastCheckedTime:1,
 
     BackgroundRangeChange : function(e)
     {
@@ -171,7 +174,7 @@ var webMapper =
                 
                 if( !pointsAdded && webMapper.currentRefreshInterval < webMapper.MAX_REFRESH_INTERVAL )
                 {
-                    webMapper.currentRefreshInterval += webMapper.refreshIntervalStep;
+                    webMapper.currentRefreshInterval += webMapper.REFRESH_INTERVAL_STEP;
                 }
                 else if( pointsAdded )
                 {
@@ -248,17 +251,6 @@ var webMapper =
                 }
             }
         );     
-    },
-
-    MapIDKeyPress : function(e)
-    {
-        var id_text = $("#map_id").val();
-        
-        if( id_text.length > 15 )
-        {
-            $("#map_id").val( id_text.slice(0,15) );
-        }
-        
     },
 
     UnloadMapClick : function(e)
@@ -366,26 +358,6 @@ var webMapper =
         log( coords.x + " : " + coords.y );
     },
 
-    Init : function()
-    {
-        $(document).ready( function(e){
-            $("#map").hide();
-            $("#map_admin").hide();
-            $("#drawing_tools").hide();
-            $("#options_menu").hide();
-            $("#map_menu").hide();
-            
-            webMapper.CLIENT_IP = CLIENT_IP;
-            CLIENT_IP = null;
-            
-            webMapper.ID = ID;
-            ID = '';
-            
-            webMapper.BindEvents();
-            webMapper.LoadMapClick();
-        });        
-    },
-
     MouseCoords : function(ev){
         // from http://www.webreference.com/programming/javascript/mk/column2/
         if(ev.pageX || ev.pageY){
@@ -420,7 +392,7 @@ var webMapper =
         if( removeOnExit == undefined )
         {
             $(popup).mouseleave( function(e){
-                CloseOptionsMenu( this );
+                webMapper.CloseOptionsMenu( this );
             });
         }
         
@@ -497,15 +469,19 @@ var webMapper =
         $("#example_point").css( { 'background-color':$("#point_color").val() } );
     },
 
+    // Returns the class associated with the tool
+    //  tool: Tool to request id, if undefined will return the current drawing tools class
     GetToolClass : function( tool )
     {
-
+        
         if( tool == undefined )
         {
             tool = webMapper.drawingTool;
         }
-
+        
         var output = '';
+        
+        // Get the class for the tool *** REFACTOR ***
         switch( parseInt(tool) )
         {
             case 0:
@@ -520,38 +496,75 @@ var webMapper =
 
     },
 
+    // Alters the example point and sets the internal drawing state to the desired tool
     PointTypeChange : function(e)
     {
+        // Set drawing tool state
         webMapper.drawingTool = parseInt($("#point_type").val());
         
+        // Set the example point
         $("#example_point").removeClass();
-        
         $("#example_point").addClass("point "+ webMapper.GetToolClass( webMapper.drawingTool ));    
         
     },
 
+    // Binds events for the web application and general mapper related functions
     BindEvents : function()
     {
-        $("#background_range").change( webMapper.BackgroundRangeChange );
-        $("#map_range").change( webMapper.MapOpacityRangeChange );
-        $(".map_image").click( webMapper.MapClick );
-        $("#map_generate_button").click( webMapper.GenerateMapIDClick );
-        $("#map_load_button").click( webMapper.LoadMapClick );
-        $("#map_unload_button").click( webMapper.UnloadMapClick );
-        $("#map_id").keypress( webMapper.MapIDKeyPress );
-        $(document).keypress( webMapper.DocumentKeypress );
-        $("#map_link_button").click( webMapper.ShowLinkClick );
-        $("#point_color").change( webMapper.ColorSelectorChange );
-        
-        $("#map_tools").click( webMapper.MapToolsClick );
-        $("#map_options").click( webMapper.OptionsClick );
+        // Map event handlers
+        $(".map_image").click( webMapper.MapClick ); // Generates points
+        $(document).keypress( webMapper.DocumentKeypress ); // Redirects the enter key to load map
+
+        // Admin Menu
         $("#map_admin").click( webMapper.AdminClick );
-        $("#map_maps").click( webMapper.MapMenuClick );
         
+        // Toolbar Load Button
+        $("#map_load_button").click( webMapper.LoadMapClick );  
+        
+        // Map Menu
+        $("#map_maps").click( webMapper.MapMenuClick ); 
+        $("#map_generate_button").click( webMapper.GenerateMapIDClick );           
+        $("#map_unload_button").click( webMapper.UnloadMapClick );
+        $("#map_link_button").click( webMapper.ShowLinkClick );        
+        
+        // Drawing Tools Menu
+        $("#map_tools").click( webMapper.MapToolsClick );        
+        $("#point_color").change( webMapper.ColorSelectorChange );
         $("#point_type").change( webMapper.PointTypeChange );
         
-        
+        // Options Menu
+        $("#map_options").click( webMapper.OptionsClick ); 
+        $("#background_range").change( webMapper.BackgroundRangeChange );
+        $("#map_range").change( webMapper.MapOpacityRangeChange );        
     },
+    
+    // Inits the application, binds event handlers
+    Init : function()
+    {      
+        $(document).ready( function(e){
+        
+            // Get the IP from the index form
+            webMapper.CLIENT_IP = CLIENT_IP;
+            CLIENT_IP = undefined;
+            
+            // Get the instance ID from the web form
+            webMapper.ID = ID;
+            ID = undefined;
+            
+            // Remove sections of the DOM
+            $(".REMOVE_ON_LOAD").remove();
+
+            // Hide sections of the UI that are dynamically shown
+            $("#map").hide();
+            $("#map_admin").hide();
+            $("#drawing_tools").hide();
+            $("#options_menu").hide();
+            $("#map_menu").hide();
+            
+            webMapper.BindEvents();
+            webMapper.LoadMapClick();            
+        });        
+    },    
 
 };
 

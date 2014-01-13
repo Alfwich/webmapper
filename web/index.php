@@ -65,7 +65,7 @@
     <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript" src="js/jscolor/jscolor.js"></script>
     <script type="text/javascript" src="js/webtoolkit.md5.js"></script>
-    <script type="text/javascript">
+    <script type="text/javascript" class="REMOVE_ON_LOAD">
         var ID = "<?php echo substr( md5(time()), 0, 10 ); ?>";
         var CLIENT_IP="<?php echo $_SERVER['REMOTE_ADDR']; ?>";
     </script>
@@ -73,8 +73,8 @@
 <body>
     <div id="application">
         <div id="top_bar">
-            <input type="text" spellcheck="false" placeholder="Enter Map ID" id="map_id" value="<?php echo isset($_GET['m'])?$_GET['m']:''; ?>" />
-            <input type="text" spellcheck="false" placeholder="Optional Passphrase" id="map_passphrase" value="<?php echo isset($_GET['p'])?$_GET['p']:''; ?>" />
+            <input type="text" maxlength="15" spellcheck="false" placeholder="Enter Map ID" id="map_id" value="<?php echo isset($_GET['m'])?$_GET['m']:''; ?>" />
+            <input type="text" maxlength="15" spellcheck="false" placeholder="Optional Passphrase" id="map_passphrase" value="<?php echo isset($_GET['p'])?$_GET['p']:''; ?>" />
             <input type="button" id="map_load_button" value="Load / Create Map" />
             <input type="button" id="map_maps" value="Map" />
             <div id="map_menu">
