@@ -116,14 +116,6 @@ function DB_GetInsertID()
     return mysql_insert_id();
 }
 
-
-
-
-
-
-
-
-
 // Returns the associated file in the post array or ends execution if the variable is required and not present
 // Precondition: Assumes a DB link
 //	$postVariable: The post variable to retrieve
@@ -135,13 +127,13 @@ function Get( $postVariable, $required = true, $default = null )
 	{
 		if( $required )
 		{
-			exit( ERROR_VARIABLE_NOT_FOUND . ": {$postVariable}" );
+			exit( "ERROR_VARIABLE_NOT_FOUND" . ": {$postVariable}" );
 		}
 		
 		return $default;
 	}
 	
-	return str_replace( ';', '', $_POST[$postVariable]||!$required)?mysql_real_escape_string($_POST[$postVariable]):exit( ERROR_VARIABLE_NOT_FOUND . ": {$postVariable}" );
+	return str_replace( ';', '', $_POST[$postVariable]||!$required)?mysql_real_escape_string($_POST[$postVariable]):exit( "ERROR_VARIABLE_NOT_FOUND" . ": {$postVariable}" );
 
 }
 

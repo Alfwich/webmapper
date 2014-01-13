@@ -34,6 +34,7 @@
     // Database abstraction
     include_once 'php/db.php';
     
+    /*
     // Whitelist array
     $whiteList = array(
         '71.202.94.245',
@@ -46,6 +47,7 @@
         header('Location: http://arthurwut.com');
         return;
     }
+    */
     
     // AJAX handler
     if( ( $result = include_once 'php/ajax.php' ) != null )
@@ -63,41 +65,56 @@
     <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript" src="js/jscolor/jscolor.js"></script>
     <script type="text/javascript" src="js/webtoolkit.md5.js"></script>
-    <script type="text/javascript">var id = "<?php echo md5(time()); ?>";</script>
+    <script type="text/javascript">
+        var id = "<?php echo substr( md5(time()), 0, 10 ); ?>";
+        var CLIENT_IP="<?php echo $_SERVER['REMOTE_ADDR']; ?>";
+    </script>
 </head>
 <body>
     <div id="application">
-        <!--
-        <div id="visual_menu">
-            <div class="dark"></div>
-            <input type="range" id="background_range" name="background_color" min="0" max="255" value="255">
-            <div class="light"></div>
-            
-            <div class="visible"></div>
-            <input type="range" id="map_range" name="map_opacity" min="0" max="100" value="100">
-            <div class="invisible"></div>
-            
-        </div>
-        -->
         <div id="top_bar">
             <input type="text" spellcheck="false" placeholder="Enter Map ID" id="map_id" value="<?php echo isset($_GET['m'])?$_GET['m']:''; ?>" />
-            <input type="button" id="map_load_button" value="Load Map" />
-            <input disabled type="button" id="map_unload_button" value="Unload Map" />
-            <input type="button" id="map_generate_button" value="Generate ID" />
-            <div class="vr_bar"></div>
-            <div id="map_label"></div>
-            <input type="button" id="map_link_button" value=" " />
-            
-            <input type="button" id="options_menu" value=" " />
+            <input type="text" spellcheck="false" placeholder="Optional Passphrase" id="map_passphrase" value="<?php echo isset($_GET['p'])?$_GET['p']:''; ?>" />
+            <input type="button" id="map_load_button" value="Load / Create Map" />
+            <input type="button" id="map_maps" value="Map" />
+            <div id="map_menu">
+                <input type="button" id="map_generate_button" value="Generate Random ID" />
+                <input disabled type="button" id="map_unload_button" value="Unload Current Map" />
+                <input disabled type="button" id="map_link_button" value="Get Sharable Link" />
+            </div>
+            <input type="button" id="map_options" class="right" value="Options" />
+            <div id="options_menu">
+                <h4>Display Settings</h4>                
+                <div class="dark"></div>
+                <div class="light"></div>
+                <input type="range" id="background_range" name="background_color" min="0" max="255" value="255">
+                <hr>
+                <h4>Map Settings</h4>                
+                <div class="visible"></div>
+                <div class="invisible"></div>
+                <input type="range" id="map_range" name="map_opacity" min="0" max="100" value="100">
+            </div>
+            <div id="drawing_tools">
+                <h4>Color</h4>
+                <input type="text" id="point_color" name="color" class="color" value="" />
+                <BR/>
+                <h4>Type</h4>
+                <select id="point_type">
+                    <option value="0">Circle</option>
+                    <option value="1">Square</option>
+                </select>
+            </div>
+            <input type="button" id="map_tools" class="right" value="Drawing Tools" />
+            <div id="drawing_tool">
+                <div class="point_wrapper">
+                    <div id="example_point" class="point point_circle" >
+                    </div>
+                </div>            
+            </div>
+            <input type="button" id="map_admin" class="right" value="Admin" />
         </div>
         <div id="map" class="no_select">
-            
-            <div class="map_image">
-            </div>
-            <div id="color">
-                Dot Color <input type="text" name="color" class="color" value="" />
-                <!-- <input type="button" id="clear_dots_button" name="clear_dots" value="Clear My Dots" /> -->
-            </div>
+            <div class="map_image"></div>
         </div>
     </div>
 </body>
