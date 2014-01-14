@@ -1,6 +1,7 @@
 <?php
 
     // Returns the id of the map if the ip provided is the correct orginator ip
+    // assumes that the variables have been previously escaped
     // $map: The map key to check against
     // $ip: The ip to check for being the orginator
     // [$passphrase]: Optional passphrase to check against map
@@ -11,7 +12,7 @@
         {
             return 0;
         }
-        
+                
         // If the passphrase is not provided then use the default passphrase
         if( strlen( $passphrase ) <= 0 )
         {

@@ -2,7 +2,6 @@
 // Database: Defines functions for php database connections
 // Arthur Wuterich
 // 8/28/13
-
 // Database constants are defines in the .htaccess file
 
 // Connects to MySQL database  
@@ -117,6 +116,14 @@ function DB_GetInsertID()
     return mysql_insert_id();
 }
 
+// Escapes the provided variable to prevent sql injection
+// Precondition: Assumes a DB link
+// $var: The variable to escape
+function DB_Escape( $var )
+{
+    return mysql_real_escape_string( $var );
+}
+
 // Returns the associated file in the post array or ends execution if the variable is required and not present
 // Precondition: Assumes a DB link
 //	$postVariable: The post variable to retrieve
@@ -134,7 +141,7 @@ function Get( $postVariable, $required = true, $default = null )
 		return $default;
 	}
 	
-	return str_replace( ';', '', $_POST[$postVariable]||!$required)?mysql_real_escape_string($_POST[$postVariable]):exit( "ERROR_VARIABLE_NOT_FOUND" . ": {$postVariable}" );
+	return str_replace( ';', '', $_POST[$postVariable]||!$required)?DB_Escape($_POST[$postVariable]):exit( "ERROR_VARIABLE_NOT_FOUND" . ": {$postVariable}" );
 
 }
 
