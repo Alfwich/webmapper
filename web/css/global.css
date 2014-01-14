@@ -55,7 +55,8 @@ hr
 #map .map_image
 {
     position: relative;
-    background-image:url('../image/map.jpg');
+    background-image:url('../image/default_image.jpg');
+    background-color: #AAA;
     background-size: 100% 100%;
     padding-bottom: 55%;
 }
@@ -277,7 +278,7 @@ hr
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#888888', endColorstr='#575757');    
 }
 
- .popup, #drawing_tools, #options_menu, #map_menu
+ .popup, #drawing_tools, #options_menu, #map_menu, #admin_menu
 {
     padding:5px;
     
@@ -296,7 +297,7 @@ hr
     border: solid 1px #b7b7b7; 
 }
 
-#drawing_tools, #options_menu, #map_menu
+#drawing_tools, #options_menu, #map_menu, #admin_menu
 {
     position:absolute;
     z-index: 5;
@@ -313,12 +314,17 @@ hr
     right: 5px;
 }
 
+#admin_menu
+{
+    right:227px;
+}
+
 #map_menu
 {
     left: 464px;
 }
 
-#top_bar #map_menu input[type=button]
+#top_bar #map_menu input[type=button], #top_bar #admin_menu input
 {
     float: none;
     display: block;
@@ -326,10 +332,15 @@ hr
     margin: 5px;
 }
 
-#options_menu input, #map_menu input[type=button]
+#options_menu input, #map_menu input[type=button], #admin_menu input
 {
     position: relative;
     right: 5px;
+}
+
+#admin_menu input
+{
+    right: 2px;
 }
 
 #point_color

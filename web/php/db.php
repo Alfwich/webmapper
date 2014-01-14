@@ -10,6 +10,7 @@ function DB_Connect()
 {
 	$link = mysql_connect( $_SERVER['DB_HOST_NAME'], $_SERVER['DB_USER_NAME'], $_SERVER['DB_PASSWORD'] );
 	mysql_select_db( $_SERVER['DB_DATABASE'] );
+    define( 'DB_CONNECTED', true );    
 	return $link;
 }
 

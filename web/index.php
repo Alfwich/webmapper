@@ -62,6 +62,7 @@
     <title>Mapper</title>
     <link rel="stylesheet" type="text/css" href="css/global.css">
     <script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="js/web_map.js"></script>
     <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript" src="js/jscolor/jscolor.js"></script>
     <script type="text/javascript" src="js/webtoolkit.md5.js"></script>
@@ -112,6 +113,12 @@
                 </div>            
             </div>
             <input type="button" id="map_admin" class="right" value="Admin" />
+            <div id="admin_menu">
+                <input type="button" id="map_admin_delete_points" value="Delete All Points" />
+                <hr>
+                <input type="text" id="map_admin_background_url" value="" />
+                <input type="button" id="map_admin_set_background" value="Set Background Image" />
+            </div>
         </div>
         <div id="map" class="no_select">
             <div class="map_image"></div>
