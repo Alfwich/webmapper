@@ -98,6 +98,16 @@
                 <input type="range" id="map_range" name="map_opacity" min="0" max="100" value="100">
             </div>
             <div id="drawing_tools">
+                <h4>Tool</h4>
+                <input type="button" class="tool dot" id="tool_dot" value="">
+                <input type="button" class="tool square" id="tool_square" value="">
+                <input type="button" class="tool round_square" id="tool_round_square" value="">
+                <input type="button" class="tool h_line" id="tool_h_line" value="">
+                <input type="button" class="tool v_line" id="tool_v_line" value="">
+                <input type="button" class="tool cross" id="tool_cross" value="">
+                <input type="button" class="tool circle" id="tool_circle" value="">
+                <input type="button" class="tool delete" id="tool_delete" value="">
+                <HR/>            
                 <div class="left cell">
                     <h4>Fill Color</h4>
                     <input type="text" id="fill_color" name="color" class="color" value="" />
@@ -117,19 +127,7 @@
                     <div class="small left minus"></div>
                     <div class="small right plus"></div>
                     <input type="range" id="outline_size_range"  min="0" max="8" value="1">                
-                </div>                
-                <HR/>
-                <h4>Type</h4>
-                <select id="point_type">
-                    <option value="0">Dot</option>
-                    <option value="1">Square</option>
-                    <option value="2">Rounded Square</option>
-                    <option value="3">H. Line</option>
-                    <option value="4">V. Line</option>
-                    <option value="5">Cross</option>
-                    <option value="6">Circle</option>
-                    <option value="7">Delete</option>
-                </select>
+                </div>                                
             </div>
             <!-- <input type="button" id="map_tools" class="right" value="Drawing Tools" /> -->
             <div id="drawing_tool">            

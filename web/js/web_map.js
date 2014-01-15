@@ -784,17 +784,6 @@ var webMapper =
         return webMapper.toolClasses[tool]!=undefined?webMapper.toolClasses[tool]:'';
 
     },
-
-    // Alters the example point and sets the internal drawing state to the desired tool
-    PointTypeChange : function(e)
-    {
-        // Set drawing tool state
-        webMapper.currentDrawingTool = parseInt($("#point_type").val());
-        
-        // Set the example point
-        webMapper.ClearExamplePoint();
-        webMapper.DrawExamplePoint(); 
-    },
     
     // Will send a request to delete all points for this current map
     DeleteAllPointsRequest : function(e)
@@ -848,6 +837,36 @@ var webMapper =
         clearTimeout( webMapper.resizeTimeout );
         webMapper.resizeTimeout = setTimeout( webMapper.ResizeSizeMap, 100 );
     },
+    
+    ToolChange : function(e)
+    {
+        // Unselect all tool buttons
+        var toolClasses = { 'dot':0, 'square':1, 'round_square':2, 'h_line':3, 'v_line':4, 'cross':5, 'circle':6, 'delete':7 };
+        
+        // Go over each tool class and adjust based on the clicked object
+        for( var property in toolClasses )
+        {
+            var html_tool = $("#tool_"+property);
+            if( html_tool[0] === $(e.target)[0] )
+            {
+                html_tool.css( { 'background-color':'rgba(0,0,0,.2)' } );
+                
+                // Get the classes of the object
+                var classList = html_tool.attr('class').split(/\s+/);
+                
+                // Set to the value of the 2nd class *** REFACTOR ***
+                webMapper.currentDrawingTool = toolClasses[classList[1]];
+            }
+            else
+            {
+                html_tool.css( { 'background-color':'transparent' } );
+            }
+        }
+        
+        webMapper.ClearExamplePoint();
+        webMapper.DrawExamplePoint();         
+        
+    },
 
     // Binds events for the web application and general mapper related functions
     BindEvents : function()
@@ -876,10 +895,18 @@ var webMapper =
         $("#drawing_tool").click( webMapper.MapToolsClick );        
         $("#fill_color").change( webMapper.FillColorSelectorChange );
         $("#outline_color").change( webMapper.OutlineColorSelectorChange );
-        $("#point_type").change( webMapper.PointTypeChange );
         $("#size_range").change( webMapper.SizeChange );
         $("#outline_size_range").change( webMapper.OutlineSizeChange );
-        
+        // Tool Clicks
+        $("#tool_dot").click( webMapper.ToolChange );
+        $("#tool_square").click( webMapper.ToolChange );
+        $("#tool_round_square").click( webMapper.ToolChange );
+        $("#tool_h_line").click( webMapper.ToolChange );
+        $("#tool_v_line").click( webMapper.ToolChange );
+        $("#tool_cross").click( webMapper.ToolChange );
+        $("#tool_circle").click( webMapper.ToolChange );
+        $("#tool_delete").click( webMapper.ToolChange );
+       
         // Options Menu
         $("#map_options").click( webMapper.OptionsClick ); 
         $("#background_range").change( webMapper.BackgroundRangeChange );
