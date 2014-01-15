@@ -88,18 +88,36 @@
             <input type="button" id="map_options" class="right" value="Options" />
             <div id="options_menu">
                 <h4>Display Settings</h4>                
-                <div class="dark"></div>
-                <div class="light"></div>
+                <div class="small dark"></div>
+                <div class="small light"></div>
                 <input type="range" id="background_range" name="background_color" min="0" max="255" value="255">
                 <hr>
                 <h4>Map Settings</h4>                
-                <div class="visible"></div>
-                <div class="invisible"></div>
+                <div class="small visible"></div>
+                <div class="small invisible"></div>
                 <input type="range" id="map_range" name="map_opacity" min="0" max="100" value="100">
             </div>
             <div id="drawing_tools">
-                <h4>Color</h4>
-                <input type="text" id="point_color" name="color" class="color" value="" />
+                <div class="left cell">
+                    <h4>Fill Color</h4>
+                    <input type="text" id="fill_color" name="color" class="color" value="" />
+                </div>
+                <div class="right cell">
+                    <h4>Outline Color</h4>
+                    <input type="text" id="outline_color" name="color" class="color" value="" />                
+                </div>
+                <div class="center cell">
+                    <h4>Size</h4>
+                    <div class="small left minus"></div>
+                    <div class="small right plus"></div>
+                    <input type="range" id="size_range"  min="1" max="40" value="5">                
+                </div>
+                <div class="center cell">
+                    <h4>Outline Size</h4>
+                    <div class="small left minus"></div>
+                    <div class="small right plus"></div>
+                    <input type="range" id="outline_size_range"  min="0" max="8" value="1">                
+                </div>                
                 <HR/>
                 <h4>Type</h4>
                 <select id="point_type">
@@ -110,6 +128,7 @@
                     <option value="4">V. Line</option>
                     <option value="5">Cross</option>
                     <option value="6">Circle</option>
+                    <option value="7">Delete</option>
                 </select>
             </div>
             <!-- <input type="button" id="map_tools" class="right" value="Drawing Tools" /> -->

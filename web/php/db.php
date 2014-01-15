@@ -121,7 +121,19 @@ function DB_GetInsertID()
 // $var: The variable to escape
 function DB_Escape( $var )
 {
-    return mysql_real_escape_string( $var );
+    if( is_array( $var ) )
+    {
+        foreach( $var as &$value )
+        {
+            $value = DB_Escape( $value );
+        }
+        
+        return $var;
+    }
+    else
+    {
+        return mysql_real_escape_string( $var );
+    }
 }
 
 // Returns the associated file in the post array or ends execution if the variable is required and not present

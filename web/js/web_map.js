@@ -16,13 +16,21 @@ var webMapper =
     // Application Variables
     currentMapID:'',
     currentPassphrase:'',
-    drawingTool:0,
-    drawingColor:"#FFF",
+    
+    // Drawing state
+    currentDrawingTool:0,
+    currentSize:5,
+    currentOutlineSize:1,
+    currentFillColor:"FFF",
+    currentOutlineColor:"000",
     
     // State Flags
     admin:false,    
     hasLoaded:false,
     isLoading:false,
+    
+    // Resize Timeout
+    resizeTimeout:null,
     
     // Refresh Timer Variables
     refreshTimeoutId:null,
@@ -69,7 +77,18 @@ var webMapper =
         // Add the point
         var posX = $(this).offset().left,
             posY = $(this).offset().top;
-        webMapper.AddRelativePoint( (e.pageX - posX), (e.pageY - posY), webMapper.drawingColor, webMapper.drawingTool );
+        
+        var point = {
+            'x':(e.pageX - posX),
+            'y':(e.pageY - posY),
+            'color':webMapper.currentFillColor,
+            'size':webMapper.currentSize,
+            'tool':webMapper.currentDrawingTool,
+            'outline':webMapper.currentOutlineColor,            
+            'outline_size':webMapper.currentOutlineSize,
+        };
+                
+        webMapper.AddRelativePoint( point );
     },
     
     // Adds a point to the map based on the position in pixels
@@ -77,57 +96,35 @@ var webMapper =
     // y: y position of the point in pixels
     // color: Color of the point
     // tool: Tool class to add to the point
-    AddRelativePoint : function(x,y,color,tool)
+    AddRelativePoint : function( point )
     {
         var mapWidth = $("#map .map_image").width();
         var mapHeight = $("#map .map_image").outerHeight();
-        webMapper.AddPoint( ( x / mapWidth ) * 100 , ( y / mapHeight ) * 100, color, tool );
+        
+        point.x = point.x / mapWidth * 100;
+        point.y = point.y / mapHeight * 100;
+        webMapper.AddPoint( point );
     },
 
     // Adds a point to the currently loaded map
-    // x: x position of the point in % of the map size
-    // y: y position of the point in % of the map size
-    // color: Color that the point will be
-    // tool: Tool class to add to the point
+    // point: obj to describe point
     // [sId]: The creator's user id. If this is defined then the point will not be synced with the server
     //                               to prevent infinite loops
-    AddPoint : function(x,y,color,tool,sId)
-    {
+    AddPoint : function( point, sId )
+    {        
         // If this point has been created by this user do not add it unless this is during the loading phase
-        if( webMapper.ID == webMapper.sId && !webMapper.hasLoaded )
+        if( webMapper.ID == sId && !webMapper.hasLoaded )
         {
             return false;
         }
-        /*
-        
-        // Create the point
-        var pointWrapper = $("<div>",{
-            class:'point_wrapper',
-        });
-        
-        // Set position
-        $(pointWrapper).css( { "left":x+"%", "top":y+"%" } );    
-
-        var point = $("<div>",{
-            class:'point ' + webMapper.GetToolClass( tool ),
-        });
-        
-        // Set color
-        $(point).css( { "background-color":color } );
-        $(pointWrapper).append(point);
-        
-        // Add to the map
-        $("#map .map_image").append( pointWrapper );
-        */
-        
-        webMapper.DrawPoint( x, y, color, tool );
+                
+        webMapper.DrawPoint( point );
         
         // Save the point with the server if no user id is defined
         if( sId == undefined )
         {
-                
             // Send AJAX call to add point to DB
-            var post = { 'ajax_request':'save_point', 'x':x, 'y':y, 'user_id':webMapper.ID, 'color':color, 'map':webMapper.currentMapID, 'tool':tool };
+            var post = { 'ajax_request':'save_point', 'user_id':webMapper.ID, 'map':webMapper.currentMapID, 'json':point };
             log( post );
                 $.post(
                 "/ne/",
@@ -142,60 +139,55 @@ var webMapper =
     },
     
     // Will draw a SVG point at the desired location and with desired tool and color
-    DrawPoint : function( x, y, color, tool, canvas )
+    DrawPoint : function( point, canvas )
     {       
         if( typeof canvas === 'undefined' )
         {
             canvas = webMapper.canvas;
         }
-        /*
-            <option value="0">Dot</option>
-            <option value="1">Square</option>
-            <option value="2">Rounded Square</option>
-            <option value="3">H. Line</option>
-            <option value="4">V. Line</option>
-            <option value="5">Cross</option>
-            <option value="6">Circle</option>        
-        */
         
-        switch( parseInt( tool ) )
+        // Convert size into int for calculations
+        point.size = parseInt( point.size );
+        
+        switch( parseInt( point.tool ) )
         {
             case 0:
                 // Dot
-                canvas.circle( x+"%", y+"%", 6 ).attr( "fill", color );  
+                canvas.circle( point.x+"%", point.y+"%", point.size ).attr( { "fill": point.color, 'stroke-width':point.outline_size, "stroke":point.outline } );
             break;
             
             case 1:
                 // Square
                 // Transforms to place in center
-                canvas.rect( x+"%", y+"%", 12, 12 ).attr( "fill", color ).transform("t-6,-6");  
+                canvas.rect( point.x+"%", point.y+"%", point.size, point.size ).attr( { "fill": point.color, 'stroke-width':point.outline_size, "stroke":point.outline } ).transform("t-"+(point.size/2)+",-"+(point.size/2));  
             break;
             
             case 2:
                 // Rounded Square
                 // Transforms to place in center
-                canvas.rect( x+"%", y+"%", 12, 12, 3 ).attr( "fill", color ).transform("t-6,-6");  
+                point.size += 3;
+                canvas.rect( point.x+"%", point.y+"%", point.size, point.size, point.size/4 ).attr( { "fill": point.color, 'stroke-width':point.outline_size, "stroke":point.outline } ).transform("t-"+(point.size/2)+",-"+(point.size/2)); 
             break;
 
             case 3:
                 // Horizontal Line
-                canvas.rect( "0%", y+"%", "100%", 1 ).attr( "stroke", color );
+                canvas.rect( "0%", point.y+"%", "100%", point.size ).attr( { "stroke":point.outline, 'fill':point.outline } ).transform( "t0,-"+(point.size/2) );
             break;
 
             case 4:
                 // Vertical Line
-                canvas.rect( x+"%", "0%", 1, "100%" ).attr( "stroke", color );
+                canvas.rect( point.x+"%", "0%", point.size, "100%" ).attr( { "stroke":point.outline, 'fill':point.outline } ).transform( "t-"+(point.size/2)+",0" );
             break;
             
             case 5:
                 // Cross
-                canvas.rect( "0%", y+"%", "100%", 1 ).attr( "stroke", color );                
-                canvas.rect( x+"%", "0%", 1, "100%" ).attr( "stroke", color );
+                canvas.rect( "0%", point.y+"%", "100%", point.size ).attr( { "stroke":point.outline, 'fill':point.outline } ).transform( "t0,-"+(point.size/2) );
+                canvas.rect( point.x+"%", "0%", point.size, "100%" ).attr( { "stroke":point.outline, 'fill':point.outline } ).transform( "t-"+(point.size/2)+",0" );
             break;             
 
             case 6:
                 // Circle
-                canvas.circle( x+"%", y+"%", 6 ).attr( "stroke", color );              
+                canvas.circle( point.x+"%", point.y+"%", point.size ).attr( { "stroke": point.outline, 'stroke-width':point.outline_size, } );              
             break;            
         }
     },
@@ -269,7 +261,7 @@ var webMapper =
             "/ne/",
             post,
             function(data) {
-            
+                log( data );            
                 var pointsAdded = false;
                 
                 // Check to see if the old map id and the new map id are different; if this is the case then don't add the points
@@ -278,8 +270,6 @@ var webMapper =
                 {
                     return;
                 }                 
-                
-                log( data );
                 
                 var result = jQuery.parseJSON( data );
 
@@ -312,7 +302,7 @@ var webMapper =
                 // Add each point
                 for( Point in result.points )
                 {
-                    if( webMapper.AddPoint( result.points[Point].x, result.points[Point].y, result.points[Point].color, result.points[Point].tool, result.points[Point].user_id ) )
+                    if( webMapper.AddPoint( result.points[Point].json, result.points[Point].user_id ) )
                     {
                         pointsAdded = true;
                     }
@@ -694,6 +684,7 @@ var webMapper =
     {
         $("#options_menu").hide();
         $("#admin_menu").hide();
+        $("#map_menu").hide();           
         
         webMapper.ToggleVisibility( "#drawing_tools" );
     },
@@ -703,6 +694,7 @@ var webMapper =
     {
         $("#drawing_tools").hide();
         $("#admin_menu").hide();
+        $("#map_menu").hide();           
         
         webMapper.ToggleVisibility( $("#options_menu") );
     },
@@ -712,6 +704,7 @@ var webMapper =
     {
         $("#drawing_tools").hide();
         $("#options_menu").hide();
+        $("#map_menu").hide();           
         
         webMapper.ToggleVisibility( $("#admin_menu") );
     },
@@ -719,6 +712,9 @@ var webMapper =
     // Open the map menu when the map button is clicked
     MapMenuClick : function(e)
     {
+        $("#options_menu").hide();    
+        $("#drawing_tools").hide();
+        $("#admin_menu").hide();     
         webMapper.ToggleVisibility( $("#map_menu") );
     },
     
@@ -730,15 +726,48 @@ var webMapper =
     
     DrawExamplePoint : function()
     {
-        webMapper.DrawPoint( 50, 50, webMapper.drawingColor, webMapper.drawingTool, webMapper.exampleCanvas );
+        var point = {
+            'x':50,
+            'y':50,
+            'color':webMapper.currentFillColor,
+            'outline':webMapper.currentOutlineColor,
+            'size':webMapper.currentSize,
+            'tool':webMapper.currentDrawingTool,
+            'outline':webMapper.currentOutlineColor,
+            'outline_size':webMapper.currentOutlineSize,
+        };
+        
+        webMapper.DrawPoint( point, webMapper.exampleCanvas );
     },
 
-    // Change the example point's color when the tool color is changed
-    ColorSelectorChange : function(e)
+    // Change the example point's fill color when the fill color is changed
+    FillColorSelectorChange : function(e)
     {
-        webMapper.drawingColor = $("#point_color").val();
+        webMapper.currentFillColor = $("#fill_color").val();
         webMapper.ClearExamplePoint();
         webMapper.DrawExamplePoint();
+    },
+    
+    // Change the example point's outline color when outline color is changed
+    OutlineColorSelectorChange : function(e)
+    {
+        webMapper.currentOutlineColor = $("#outline_color").val();
+        webMapper.ClearExamplePoint();
+        webMapper.DrawExamplePoint();        
+    },
+    
+   SizeChange : function(e)
+    {
+        webMapper.currentSize = $("#size_range").val();
+        webMapper.ClearExamplePoint();
+        webMapper.DrawExamplePoint();     
+    },
+
+    OutlineSizeChange : function(e)
+    {
+        webMapper.currentOutlineSize = $("#outline_size_range").val();
+        webMapper.ClearExamplePoint();
+        webMapper.DrawExamplePoint();       
     },
 
     // Returns the class associated with the tool
@@ -748,7 +777,7 @@ var webMapper =
         
         if( tool == undefined )
         {
-            tool = webMapper.drawingTool;
+            tool = webMapper.currentDrawingTool;
         }
         
         // Return the tool class or an empty string is not defined
@@ -760,7 +789,7 @@ var webMapper =
     PointTypeChange : function(e)
     {
         // Set drawing tool state
-        webMapper.drawingTool = parseInt($("#point_type").val());
+        webMapper.currentDrawingTool = parseInt($("#point_type").val());
         
         // Set the example point
         webMapper.ClearExamplePoint();
@@ -807,7 +836,18 @@ var webMapper =
                 log( data );
             }
         );         
-    },    
+    },
+    
+    ResizeSizeMap : function(e)
+    {
+        $("#map").height( $(document).height()-50 );
+    },
+    
+    DocumentResizeEvent : function(e)
+    {
+        clearTimeout( webMapper.resizeTimeout );
+        webMapper.resizeTimeout = setTimeout( webMapper.ResizeSizeMap, 100 );
+    },
 
     // Binds events for the web application and general mapper related functions
     BindEvents : function()
@@ -816,7 +856,7 @@ var webMapper =
         $("#map_event_layer").click( webMapper.MapClick );
         $(document).keypress( webMapper.DocumentKeypress );
         $(document).mousemove( webMapper.DocumentMouseMove );
-        $(window).error( webMapper.SetDefaultImageError );
+        $(window).resize( webMapper.DocumentResizeEvent );
 
         // Admin Menu
         $("#map_admin").click( webMapper.AdminClick );
@@ -834,8 +874,11 @@ var webMapper =
         
         // Drawing Tools Menu
         $("#drawing_tool").click( webMapper.MapToolsClick );        
-        $("#point_color").change( webMapper.ColorSelectorChange );
+        $("#fill_color").change( webMapper.FillColorSelectorChange );
+        $("#outline_color").change( webMapper.OutlineColorSelectorChange );
         $("#point_type").change( webMapper.PointTypeChange );
+        $("#size_range").change( webMapper.SizeChange );
+        $("#outline_size_range").change( webMapper.OutlineSizeChange );
         
         // Options Menu
         $("#map_options").click( webMapper.OptionsClick ); 
@@ -889,6 +932,8 @@ var webMapper =
             
             webMapper.BindEvents();
             webMapper.LoadMapClick();
+            
+            webMapper.ResizeSizeMap();
         });        
     },    
 

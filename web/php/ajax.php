@@ -36,12 +36,9 @@
         switch( $_POST['ajax_request'] )
         {
             case 'save_point':
-                $x = Get( 'x' );
-                $y = Get( 'y' );
                 $user_id = Get( 'user_id' );
                 $map = Get( 'map' );
-                $color = Get( 'color' );
-                $tool = Get( 'tool', false, 0 );
+                $json = json_encode( Get( 'json', false, '' ) );
                 
                 $code = 0;
                 $message = '';
@@ -57,13 +54,13 @@
                     $id = $id[0];
                     
                     // Insert the point
-                    DB_Query( "INSERT INTO point (x,y,user_id,color,tool,map_id) VALUES ({$x}, {$y}, '{$user_id}', '{$color}', {$tool}, {$id} )" );
+                    DB_Query( "INSERT INTO point ( user_id, map_id, json) VALUES ('{$user_id}', {$id}, '{$json}' )" );
                     
                     $code = 1;
                     $message = '';                    
                 }
                 
-                $output = array( 'x' => $x, 'y' => $y, 'code' => $code, 'message' => $message );
+                $output = array( 'code' => $code, 'message' => $message );
             break;
             
             case 'load_map':
@@ -109,13 +106,21 @@
             break;
             
            case 'poll_server':
-           //var post = { 'ajax_request':'poll_server', 'time':time, 'request_time': webMapper.lastCheckedRequestTime 'map':webMapper.currentMapID };
                 $time = Get( 'time' );
                 $map = Get( 'map' );
                 $request_time = intval( Get( 'request_time' ) );
                 
                 // Check for recent requests for this map
-                $output = array( 'map' => $map, 'points' => DB_GetArray( DB_Query( "SELECT point.id, point.x, point.y, point.color, point.user_id, point.tool FROM point, map WHERE UNIX_TIMESTAMP(point.added) > {$time} AND point.map_id = map.id AND map.map_key='{$map}'" ), true ), 'code' => 1, 'time' => time() );
+                $output = array( 'map' => $map, 'points' => DB_GetArray( DB_Query( "SELECT point.json, point.user_id FROM point, map WHERE UNIX_TIMESTAMP(point.added) > {$time} AND point.map_id = map.id AND map.map_key='{$map}'" ), true ), 'code' => 1, 'time' => time() );
+                
+                // If there are results decode the json
+                if( count($output['points']) > 0 )
+                {
+                    foreach( $output['points'] as &$point )
+                    {
+                        $point['json'] = json_decode( $point['json'] );
+                    }
+                }
                 
                 // If the request_time is set to its default send a new max request time from the database
                 if( $request_time <= 2 )
