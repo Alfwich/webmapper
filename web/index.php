@@ -66,6 +66,8 @@
     <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript" src="js/jscolor/jscolor.js"></script>
     <script type="text/javascript" src="js/webtoolkit.md5.js"></script>
+    <script type="text/javascript" src="js/raphael-min.js"></script>
+    
     <script type="text/javascript" class="REMOVE_ON_LOAD">
         var ID = "<?php echo substr( md5(time()), 0, 10 ); ?>";
         var CLIENT_IP="<?php echo $_SERVER['REMOTE_ADDR']; ?>";
@@ -98,19 +100,20 @@
             <div id="drawing_tools">
                 <h4>Color</h4>
                 <input type="text" id="point_color" name="color" class="color" value="" />
-                <BR/>
+                <HR/>
                 <h4>Type</h4>
                 <select id="point_type">
-                    <option value="0">Circle</option>
+                    <option value="0">Dot</option>
                     <option value="1">Square</option>
+                    <option value="2">Rounded Square</option>
+                    <option value="3">H. Line</option>
+                    <option value="4">V. Line</option>
+                    <option value="5">Cross</option>
+                    <option value="6">Circle</option>
                 </select>
             </div>
-            <input type="button" id="map_tools" class="right" value="Drawing Tools" />
-            <div id="drawing_tool">
-                <div class="point_wrapper">
-                    <div id="example_point" class="point point_circle" >
-                    </div>
-                </div>            
+            <!-- <input type="button" id="map_tools" class="right" value="Drawing Tools" /> -->
+            <div id="drawing_tool">            
             </div>
             <input type="button" id="map_admin" class="right" value="Admin" />
             <div id="admin_menu">
@@ -121,7 +124,8 @@
             </div>
         </div>
         <div id="map" class="no_select">
-            <div class="map_image"></div>
+            <div id="map_event_layer"></div>
+            <div class="map_image" id="map_canvas"></div>
         </div>
     </div>
 </body>

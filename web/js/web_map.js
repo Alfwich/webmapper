@@ -17,6 +17,7 @@ var webMapper =
     currentMapID:'',
     currentPassphrase:'',
     drawingTool:0,
+    drawingColor:"#FFF",
     
     // State Flags
     admin:false,    
@@ -28,6 +29,10 @@ var webMapper =
     currentRefreshInterval:0,
     lastCheckedTime:2,
     lastCheckedRequestTime:2,
+    
+    // Raphael SVG 
+    canvas:null,
+    exampleCanvas:null,
     
     // Tool classes
     toolClasses : {
@@ -64,7 +69,7 @@ var webMapper =
         // Add the point
         var posX = $(this).offset().left,
             posY = $(this).offset().top;
-        webMapper.AddRelativePoint( (e.pageX - posX), (e.pageY - posY), "#"+$("#point_color").val(), webMapper.drawingTool );
+        webMapper.AddRelativePoint( (e.pageX - posX), (e.pageY - posY), webMapper.drawingColor, webMapper.drawingTool );
     },
     
     // Adds a point to the map based on the position in pixels
@@ -93,6 +98,7 @@ var webMapper =
         {
             return false;
         }
+        /*
         
         // Create the point
         var pointWrapper = $("<div>",{
@@ -111,7 +117,10 @@ var webMapper =
         $(pointWrapper).append(point);
         
         // Add to the map
-        $("#map .map_image").append( pointWrapper );    
+        $("#map .map_image").append( pointWrapper );
+        */
+        
+        webMapper.DrawPoint( x, y, color, tool );
         
         // Save the point with the server if no user id is defined
         if( sId == undefined )
@@ -130,6 +139,65 @@ var webMapper =
         }
         
         return true;
+    },
+    
+    // Will draw a SVG point at the desired location and with desired tool and color
+    DrawPoint : function( x, y, color, tool, canvas )
+    {       
+        if( typeof canvas === 'undefined' )
+        {
+            canvas = webMapper.canvas;
+        }
+        /*
+            <option value="0">Dot</option>
+            <option value="1">Square</option>
+            <option value="2">Rounded Square</option>
+            <option value="3">H. Line</option>
+            <option value="4">V. Line</option>
+            <option value="5">Cross</option>
+            <option value="6">Circle</option>        
+        */
+        
+        switch( parseInt( tool ) )
+        {
+            case 0:
+                // Dot
+                canvas.circle( x+"%", y+"%", 6 ).attr( "fill", color );  
+            break;
+            
+            case 1:
+                // Square
+                // Transforms to place in center
+                canvas.rect( x+"%", y+"%", 12, 12 ).attr( "fill", color ).transform("t-6,-6");  
+            break;
+            
+            case 2:
+                // Rounded Square
+                // Transforms to place in center
+                canvas.rect( x+"%", y+"%", 12, 12, 3 ).attr( "fill", color ).transform("t-6,-6");  
+            break;
+
+            case 3:
+                // Horizontal Line
+                canvas.rect( "0%", y+"%", "100%", 1 ).attr( "stroke", color );
+            break;
+
+            case 4:
+                // Vertical Line
+                canvas.rect( x+"%", "0%", 1, "100%" ).attr( "stroke", color );
+            break;
+            
+            case 5:
+                // Cross
+                canvas.rect( "0%", y+"%", "100%", 1 ).attr( "stroke", color );                
+                canvas.rect( x+"%", "0%", 1, "100%" ).attr( "stroke", color );
+            break;             
+
+            case 6:
+                // Circle
+                canvas.circle( x+"%", y+"%", 6 ).attr( "stroke", color );              
+            break;            
+        }
     },
     
     // Will perform a request on the client
@@ -282,7 +350,12 @@ var webMapper =
     // Removes all of the points from the map
     ClearAllPoints : function()
     {
-        $("#map .point_wrapper").remove();
+        if( webMapper.canvas == null )
+        {
+            return;
+        }
+        
+        webMapper.canvas.clear();
     },
 
     // Generates a random id for the map_id
@@ -608,11 +681,11 @@ var webMapper =
     {
         if( $(obj).is(":visible") )
         {
-            $(obj).hide();
+            $(obj).fadeOut( 200 );
         }
         else
         {
-            $(obj).show();
+            $(obj).fadeIn( 200 );
         }
     },
     
@@ -648,11 +721,24 @@ var webMapper =
     {
         webMapper.ToggleVisibility( $("#map_menu") );
     },
+    
+    // Will empty the eample point canvas
+    ClearExamplePoint : function()
+    {
+        webMapper.exampleCanvas.clear();
+    },
+    
+    DrawExamplePoint : function()
+    {
+        webMapper.DrawPoint( 50, 50, webMapper.drawingColor, webMapper.drawingTool, webMapper.exampleCanvas );
+    },
 
     // Change the example point's color when the tool color is changed
     ColorSelectorChange : function(e)
     {
-        $("#example_point").css( { 'background-color':$("#point_color").val() } );
+        webMapper.drawingColor = $("#point_color").val();
+        webMapper.ClearExamplePoint();
+        webMapper.DrawExamplePoint();
     },
 
     // Returns the class associated with the tool
@@ -677,9 +763,8 @@ var webMapper =
         webMapper.drawingTool = parseInt($("#point_type").val());
         
         // Set the example point
-        $("#example_point").removeClass();
-        $("#example_point").addClass("point "+ webMapper.GetToolClass( webMapper.drawingTool ));    
-        
+        webMapper.ClearExamplePoint();
+        webMapper.DrawExamplePoint(); 
     },
     
     // Will send a request to delete all points for this current map
@@ -728,7 +813,7 @@ var webMapper =
     BindEvents : function()
     {
         // Map event handlers
-        $(".map_image").click( webMapper.MapClick );
+        $("#map_event_layer").click( webMapper.MapClick );
         $(document).keypress( webMapper.DocumentKeypress );
         $(document).mousemove( webMapper.DocumentMouseMove );
         $(window).error( webMapper.SetDefaultImageError );
@@ -748,7 +833,7 @@ var webMapper =
         $("#map_link_button").click( webMapper.ShowLinkClick );
         
         // Drawing Tools Menu
-        $("#map_tools").click( webMapper.MapToolsClick );        
+        $("#drawing_tool").click( webMapper.MapToolsClick );        
         $("#point_color").change( webMapper.ColorSelectorChange );
         $("#point_type").change( webMapper.PointTypeChange );
         
@@ -756,6 +841,23 @@ var webMapper =
         $("#map_options").click( webMapper.OptionsClick ); 
         $("#background_range").change( webMapper.BackgroundRangeChange );
         $("#map_range").change( webMapper.MapOpacityRangeChange );        
+    },
+    
+    // Inits the SVG drawing canvas
+    InitRaphael : function()
+    {
+        // Don't execute if there is already a canvas
+        if( webMapper.canvas !== null )
+        {
+            return;
+        }
+        
+        // Create the canvas for the main view
+        webMapper.canvas = Raphael( "map", "100%", "100%" );
+        
+        // Create the canvas for the example point
+        webMapper.exampleCanvas = Raphael( "drawing_tool", "100%", "100%" );
+        webMapper.DrawExamplePoint();
     },
     
     // Inits the application, binds event handlers
@@ -782,8 +884,11 @@ var webMapper =
             $("#admin_menu").hide();
             $("#map_menu").hide();
             
+            // Init SVG canvas
+            webMapper.InitRaphael();            
+            
             webMapper.BindEvents();
-            webMapper.LoadMapClick();            
+            webMapper.LoadMapClick();
         });        
     },    
 
