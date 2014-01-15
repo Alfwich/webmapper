@@ -78,11 +78,13 @@
         <div id="top_bar">
             <input type="text" maxlength="15" spellcheck="false" placeholder="Enter Map ID" id="map_id" value="<?php echo isset($_GET['m'])?$_GET['m']:''; ?>" />
             <input type="text" maxlength="15" spellcheck="false" placeholder="Optional Passphrase" id="map_passphrase" value="<?php echo isset($_GET['p'])?$_GET['p']:''; ?>" />
-            <input type="button" id="map_load_button" value="Load / Create Map" />
+            <input disabled type="button" id="map_load_button" value="Load / Create Map" />
             <input type="button" id="map_maps" value="Map" />
             <div id="map_menu">
                 <input type="button" id="map_generate_button" value="Generate Random ID" />
                 <input disabled type="button" id="map_unload_button" value="Unload Current Map" />
+                <input disabled type="button" id="map_reload_button" value="Reload Current Map" />                
+                <input disabled type="button" id="map_clear_points" value="Clear Points From Current Map" />                
                 <input disabled type="button" id="map_link_button" value="Get Sharable Link" />
             </div>
             <input type="button" id="map_options" class="right" value="Options" />
@@ -100,12 +102,12 @@
             <div id="drawing_tools">
                 <h4>Tool</h4>
                 <input type="button" class="tool dot" id="tool_dot" value="">
+                <input type="button" class="tool circle" id="tool_circle" value="">                
                 <input type="button" class="tool square" id="tool_square" value="">
                 <input type="button" class="tool round_square" id="tool_round_square" value="">
                 <input type="button" class="tool h_line" id="tool_h_line" value="">
                 <input type="button" class="tool v_line" id="tool_v_line" value="">
                 <input type="button" class="tool cross" id="tool_cross" value="">
-                <input type="button" class="tool circle" id="tool_circle" value="">
                 <input type="button" class="tool delete" id="tool_delete" value="">
                 <HR/>            
                 <div class="left cell">
@@ -129,7 +131,6 @@
                     <input type="range" id="outline_size_range"  min="0" max="8" value="1">                
                 </div>                                
             </div>
-            <!-- <input type="button" id="map_tools" class="right" value="Drawing Tools" /> -->
             <div id="drawing_tool">            
             </div>
             <input type="button" id="map_admin" class="right" value="Admin" />

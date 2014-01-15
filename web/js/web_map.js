@@ -3,8 +3,7 @@
 // 1/13/2014
 
 var webMapper = 
-{
-
+{   
     // Constants
     NO_LOADED_MAP_LABEL:'No Loaded Map',
     MAX_REFRESH_INTERVAL:10000,
@@ -16,6 +15,7 @@ var webMapper =
     // Application Variables
     currentMapID:'',
     currentPassphrase:'',
+    currentImageRatio:1,
     
     // Drawing state
     currentDrawingTool:0,
@@ -353,6 +353,8 @@ var webMapper =
     {
         var gen_id = MD5( new Date().getTime().toString() ).slice(0,16);
         $("#map_id").val( gen_id );
+        
+        webMapper.ToggleLoadMapButton();
     },
 
     // Will attempt to load the map_id in the map_id text field. 
@@ -400,6 +402,9 @@ var webMapper =
                     $("#map_id").val( '' );
                     $("#map_passphrase").val( '' );
                     
+                    webMapper.ToggleLoadMapButton();
+                    
+                    
                     // Set state variables
                     webMapper.currentMapID = data.map_key;
                     webMapper.currentPassphrase = data.passphrase;
@@ -407,9 +412,8 @@ var webMapper =
                     webMapper.hasLoaded = true;
                     
                     // Set UI state
-                    webMapper.ToggleMapLinkButton();
-                    webMapper.ToggleUnloadMapButton();
-                    webMapper.ToggleMapLinkButton();
+                                        
+                    webMapper.ToggleMapMenuButtons();
                     webMapper.ToggleAdminButton();
                     webMapper.ToggleMap();
                     document.title = 'Mapper: ' + data.map_key;
@@ -428,24 +432,46 @@ var webMapper =
             }
         );     
     },
-    
-    SetMapImage : function( image_url )
+        
+    SetMapImage : function( image_url, dontSetText )
     {
         if( typeof image_url === 'string' && ( image_url.indexOf("http://") != -1 || image_url.indexOf("https://") != -1 ) )
-        {    
-            $("#map .map_image").css( { 'background-image':"url('" + image_url + "')" } );
-            $("#map_admin_background_url").val( image_url );
+        {
+            var img = new Image();
+            img.name = "bg_img";
+            img.onload = webMapper.SetMapImageOnLoad;
+            img.src = image_url;
+            img.onerror = webMapper.SetDefaultImageError;
+            
+            $("#map .map_image").css( { 'background-image' : 'url("http://arthurwut.com/ne/image/loading.jpg")' } );
+            
+            if( typeof dontSetText === 'undefined' )
+            {
+                $("#map_admin_background_url").val( '' );
+            }
         }
         else
         {
             $("#map .map_image").css( 'background-image', '' );
-            $("#map_admin_background_url").val( '' );
+            
+            if( typeof dontSetText === 'undefined' )
+            {
+                $("#map_admin_background_url").val( '' );
+            }
         }
+    },
+    
+    SetMapImageOnLoad : function(e)
+    {
+        webMapper.currentImageRatio = this.width / this.height;
+        $("#map .map_image").css( { 'background-image':"url('" + this.src + "')" } );
+        $("#map_admin_background_url").val( this.src );
+        webMapper.ResizeMap();
     },
     
     SetDefaultImageError : function(e)
     {
-        SetMapImage();
+        webMapper.SetMapImage( 'http://arthurwut.com/ne/image/error.jpg', true );
     },
     
     // Will reload the current map if there is one loaded
@@ -474,50 +500,42 @@ var webMapper =
         // Reset UI
         document.title = 'Mapper';
         webMapper.ClearAllPoints();
-        webMapper.ToggleUnloadMapButton();
-        webMapper.ToggleMapLinkButton();
+        webMapper.ToggleMapMenuButtons();
         webMapper.ToggleAdminButton();
         webMapper.ToggleMap();
     },
     
-    // Toggles the unload map button to only be clickable when there is text in the map_id text field
-    ToggleUnloadMapButton : function()
+    ToggleMapMenuButtons : function(e)
     {
-        if( webMapper.currentMapID.length <= 0 )
+        var flag = webMapper.currentMapID.length <= 0;
+        
+        webMapper.ToggleDisables( $("#map_unload_button"), flag );
+        webMapper.ToggleDisables( $("#map_reload_button"), flag );
+        webMapper.ToggleDisables( $("#map_clear_points"), flag );
+        webMapper.ToggleDisables( $("#map_link_button"), flag );
+    },
+    
+    ToggleDisables : function( obj, condition )
+    {
+        if( typeof obj === 'undefined' )
         {
-            $("#map_unload_button").attr( 'disabled', true );
+            return;
+        }
+        
+        if( typeof condition === 'undefined' )
+        {
+            condition = obj.is(":disabled");
+        }
+        
+        if( condition )
+        {
+            obj.attr( 'disabled', true );
         }
         else
         {
-            $("#map_unload_button").attr( 'disabled', false );
+            obj.attr( 'disabled', false );
         }
-    },
-
-    // Toggles the link map button to only be clickable when there is text in the map_id text field
-    ToggleMapLinkButton : function()
-    {
-        if( webMapper.currentMapID.length <= 0 )
-        {
-            $("#map_link_button").attr( 'disabled', true );
-        }
-        else
-        {
-            $("#map_link_button").attr( 'disabled', false );
-        }
-    },
-
-    // Toggles the load map button to only be clickable when there is text in the map_id text field
-    ToggleLoadMapButton : function()
-    {
-        if( $("#map_id").val() <= 0 )
-        {
-            $("#map_load_button").attr( 'disabled', true );
-        }
-        else
-        {
-            $("#map_load_button").attr( 'disabled', false );
-        }
-    },
+    },    
     
     // Toggles the visibility of the admin button
     ToggleAdminButton : function()
@@ -532,6 +550,19 @@ var webMapper =
             $("#map_admin").fadeIn();
         }
     },
+    
+    // Toggles the load map button to only be clickable when there is text in the map_id text field
+    ToggleLoadMapButton : function()
+    {
+        if( $("#map_id").val() <= 0 )
+        {
+            $("#map_load_button").attr( 'disabled', true );
+        }
+        else
+        {
+            $("#map_load_button").attr( 'disabled', false );
+        }
+    },    
 
     // Toggles the visibility of the map
     ToggleMap : function()
@@ -574,6 +605,8 @@ var webMapper =
                 $("#map_load_button").trigger( 'click' );
             break;
         }
+        
+        
     },
     
     // Mouse move for application
@@ -807,7 +840,7 @@ var webMapper =
         webMapper.ClearAllPoints();        
     },
     
-    // Will send a request to delete all points for this current map
+    // Will send a request to set the current map image url
     SetBackgroundRequest : function(e)
     {
         // Don't do anything if there is not a loaded map
@@ -827,15 +860,32 @@ var webMapper =
         );         
     },
     
-    ResizeSizeMap : function(e)
+    ResizeMap : function(e)
     {
-        $("#map").height( $(document).height()-50 );
+        // Get the width to maintain the correct aspect ratio
+        var desiredHeight = ( $(document).width() ) / webMapper.currentImageRatio;
+        
+        // If the height is going to place image below the window then adjust width
+        if( desiredHeight + 50 > $(document).height() )
+        {
+            var desiredWidth = ( ($(document).height()-50) * webMapper.currentImageRatio );
+            
+            $("#map").width( desiredWidth );            
+            $("#map").height( $(document).height()-50 );
+            $("#map").css( { 'margin-left': ($(document).width()-desiredWidth)/2, 'margin-top':50 } );
+        }
+        else
+        {
+            $("#map").height( desiredHeight );
+            $("#map").width( $(document).width() );
+            $("#map").css( { 'margin-left': 0, 'margin-top': ( (($(document).height()+50)-desiredHeight)/2 ) } );
+        }
     },
     
     DocumentResizeEvent : function(e)
     {
         clearTimeout( webMapper.resizeTimeout );
-        webMapper.resizeTimeout = setTimeout( webMapper.ResizeSizeMap, 100 );
+        webMapper.resizeTimeout = setTimeout( webMapper.ResizeMap, 100 );
     },
     
     ToolChange : function(e)
@@ -884,12 +934,15 @@ var webMapper =
         
         // Toolbar Load Button
         $("#map_load_button").click( webMapper.LoadMapClick );  
+        $("#map_id").keyup( webMapper.ToggleLoadMapButton );
         
         // Map Menu
         $("#map_maps").click( webMapper.MapMenuClick ); 
         $("#map_generate_button").click( webMapper.GenerateMapIDClick );           
         $("#map_unload_button").click( webMapper.UnloadMapClick );
         $("#map_link_button").click( webMapper.ShowLinkClick );
+        $("#map_reload_button").click( webMapper.ReloadMap );
+        $("#map_clear_points").click( webMapper.ClearAllPoints );
         
         // Drawing Tools Menu
         $("#drawing_tool").click( webMapper.MapToolsClick );        
@@ -959,8 +1012,7 @@ var webMapper =
             
             webMapper.BindEvents();
             webMapper.LoadMapClick();
-            
-            webMapper.ResizeSizeMap();
+            webMapper.ResizeMap();
         });        
     },    
 

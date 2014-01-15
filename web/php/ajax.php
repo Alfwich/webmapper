@@ -111,7 +111,7 @@
                 $request_time = intval( Get( 'request_time' ) );
                 
                 // Check for recent requests for this map
-                $output = array( 'map' => $map, 'points' => DB_GetArray( DB_Query( "SELECT point.json, point.user_id FROM point, map WHERE UNIX_TIMESTAMP(point.added) > {$time} AND point.map_id = map.id AND map.map_key='{$map}' ORDER BY point.added" ), true ), 'code' => 1, 'time' => time() );
+                $output = array( 'map' => $map, 'points' => DB_GetArray( DB_Query( "SELECT point.json, point.user_id FROM point, map WHERE UNIX_TIMESTAMP(point.added) > {$time} AND point.map_id = map.id AND map.map_key='{$map}' ORDER BY point.added, point.id" ), true ), 'code' => 1, 'time' => time() );
                 
                 // If there are results decode the json
                 if( count($output['points']) > 0 )
