@@ -57,6 +57,8 @@
         return;
     }
 ?>
+
+<!DOCTYPE html>
 <html>
 <head>
     <title>Mapper</title>

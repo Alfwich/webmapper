@@ -149,6 +149,16 @@ var webMapper =
         // Convert size into int for calculations
         point.size = parseInt( point.size );
         
+        // Add hash for colors
+        if( typeof point.color !== 'undefined' )
+        {
+            point.color = "#"+point.color;
+        }
+        if( typeof point.outline !== 'undefined' )
+        {
+            point.outline = "#"+point.outline;
+        }        
+        
         switch( parseInt( point.tool ) )
         {
             case 0:
