@@ -80,6 +80,7 @@ hr
 
 #top_bar
 {
+    z-index:20;
     background-color: #EEE;
 }
 
@@ -193,7 +194,7 @@ hr
 
 #size_range, #outline_size_range
 {
-    width:100%;
+    width:90%;
     clear:both;
 }
 
@@ -257,7 +258,7 @@ hr
 .popup
 {
     position: absolute;
-    z-index: 10;
+    z-index: 25;
 }
 
 #drawing_tool
@@ -393,6 +394,11 @@ hr
     right:42px;
 }
 
+#top_bar #admin_menu #map_admin_background_url
+{
+    width: 90%;
+}
+
 #map_menu
 {
     left: 463px;
@@ -473,7 +479,6 @@ hr
 {
     background-position: -176px -1px;
 }
-
 
 
 
