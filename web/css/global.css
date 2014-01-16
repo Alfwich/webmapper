@@ -90,6 +90,11 @@ hr
     width:100%;
 }
 
+#top_bar #options_menu #map_range, #top_bar #options_menu #background_range
+{
+    width: 90%;
+}
+
 .small
 {
     width: 10px;
