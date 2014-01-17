@@ -149,59 +149,45 @@ var webMapper =
         // Convert size into int for calculations
         point.size = parseInt( point.size );
         
-        // Add % to the x and y
-        point.x = point.x+"%";
-        point.y = point.y+"%";
-        
-        // Add hash for colors
-        if( typeof point.color !== 'undefined' )
-        {
-            point.color = "#"+point.color;
-        }
-        if( typeof point.outline !== 'undefined' )
-        {
-            point.outline = "#"+point.outline;
-        }
-        
         switch( parseInt( point.tool ) )
         {
             case 0:
                 // Dot
-                canvas.circle( point.x, point.y, point.size ).attr( { "fill": point.color, 'stroke-width':point.outline_size, "stroke":point.outline } );
+                canvas.circle( point.x + "%", point.y + "%", point.size ).attr( { "fill": "#" + point.color, 'stroke-width':point.outline_size, "stroke":"#" + point.outline } );
             break;
             
             case 1:
                 // Square
                 // Transforms to place in center
-                canvas.rect( point.x, point.y, point.size, point.size ).attr( { "fill": point.color, 'stroke-width':point.outline_size, "stroke":point.outline } ).transform("t-"+(point.size/2)+",-"+(point.size/2));  
+                canvas.rect( point.x + "%", point.y + "%", point.size, point.size ).attr( { "fill": "#" + point.color, 'stroke-width':point.outline_size, "stroke":"#" + point.outline } ).transform("t-"+(point.size/2)+",-"+(point.size/2));  
             break;
             
             case 2:
                 // Rounded Square
                 // Transforms to place in center
                 point.size += 3;
-                canvas.rect( point.x, point.y, point.size, point.size, point.size/4 ).attr( { "fill": point.color, 'stroke-width':point.outline_size, "stroke":point.outline } ).transform("t-"+(point.size/2)+",-"+(point.size/2)); 
+                canvas.rect( point.x + "%", point.y + "%", point.size, point.size, point.size/4 ).attr( { "fill": "#" + point.color, 'stroke-width':point.outline_size, "stroke":"#" + point.outline } ).transform("t-"+(point.size/2)+",-"+(point.size/2)); 
             break;
 
             case 3:
                 // Horizontal Line
-                canvas.rect( "0%", point.y, "100%", point.size ).attr( { "stroke":point.outline, 'fill':point.outline } ).transform( "t0,-"+(point.size/2) );
+                canvas.rect( "0%", point.y + "%", "100%", point.size ).attr( { "stroke":"#" + point.outline , 'fill':"#" + point.outline } ).transform( "t0,-"+(point.size/2) );
             break;
 
             case 4:
                 // Vertical Line
-                canvas.rect( point.x, "0%", point.size, "100%" ).attr( { "stroke":point.outline, 'fill':point.outline } ).transform( "t-"+(point.size/2)+",0" );
+                canvas.rect( point.x + "%", "0%", point.size, "100%" ).attr( { "stroke":"#" + point.outline , 'fill':"#" + point.outline } ).transform( "t-"+(point.size/2)+",0" );
             break;
             
             case 5:
                 // Cross
-                canvas.rect( "0%", point.y, "100%", point.size ).attr( { "stroke":point.outline, 'fill':point.outline } ).transform( "t0,-"+(point.size/2) );
-                canvas.rect( point.x, "0%", point.size, "100%" ).attr( { "stroke":point.outline, 'fill':point.outline } ).transform( "t-"+(point.size/2)+",0" );
+                canvas.rect( "0%", point.y + "%", "100%", point.size ).attr( { "stroke":"#" + point.outline , 'fill':"#" + point.outline } ).transform( "t0,-"+(point.size/2) );
+                canvas.rect( point.x + "%", "0%", point.size, "100%" ).attr( { "stroke":"#" + point.outline , 'fill':"#" + point.outline } ).transform( "t-"+(point.size/2)+",0" );
             break;             
 
             case 6:
                 // Circle
-                canvas.circle( point.x, point.y, point.size ).attr( { "stroke": point.outline, 'stroke-width':point.outline_size, } );              
+                canvas.circle( point.x + "%", point.y + "%", point.size ).attr( { "stroke":"#" + point.outline, 'stroke-width':point.outline_size, } );              
             break;            
         }
     },
